@@ -6,65 +6,199 @@
   <meta name="theme-color" content="#10141d">
   <title>Repo Guide</title>
   <style>
-    :root { color-scheme: dark; font: 16px/1.5 system-ui, sans-serif; background: #0c1018; color: #edf1f8; }
+    :root { color-scheme: dark; font: 15px/1.55 Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif; background: #0a0e14; color: #edf1f8; }
     * { box-sizing: border-box; }
-    body { margin: 0; min-height: 100vh; background: radial-gradient(ellipse at 15% 0%, #1c2c3c, #0c1018 48%); }
-    main { width: min(760px, calc(100% - 32px)); margin: auto; padding: 72px 0 60px; }
-    .eyebrow { color: #8bd5bd; font-size: .78rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
-    h1 { margin: 10px 0 8px; font-size: clamp(2.1rem, 6vw, 3.5rem); line-height: 1.1; letter-spacing: -.045em; }
-    .intro { margin: 0 0 32px; max-width: 580px; color: #aab5c6; }
-    .panel { padding: 24px; border: 1px solid #2a3545; border-radius: 18px; background: #141b26ef; box-shadow: 0 20px 70px #0005; }
-    label { display: block; margin: 0 0 8px; color: #d4dce8; font-size: .9rem; font-weight: 650; }
-    input, textarea { width: 100%; border: 1px solid #354357; border-radius: 10px; outline: none; padding: 13px 14px; color: #edf1f8; background: #0e141e; font: inherit; }
-    textarea { min-height: 108px; resize: vertical; }
-    input:focus, textarea:focus { border-color: #70c9ad; box-shadow: 0 0 0 3px #70c9ad20; }
-    .row { display: flex; gap: 10px; align-items: end; }
-    .row input { flex: 1; min-width: 0; }
-    button { border: 0; border-radius: 10px; padding: 12px 17px; color: #07120f; background: #8bd5bd; font: inherit; font-weight: 750; cursor: pointer; }
-    button:hover { background: #a5e5d1; }
+    body { margin: 0; min-height: 100vh; background: radial-gradient(ellipse at 12% 0%, #172633 0, #0a0e14 44%); }
+    main { width: min(1180px, calc(100% - 44px)); margin: auto; padding: 28px 0 54px; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding-bottom: 54px; }
+    .brand { display: flex; align-items: center; gap: 11px; color: #f1f5fb; font-weight: 760; letter-spacing: -.02em; }
+    .brand-mark { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid #35594f; border-radius: 11px; color: #a5e5d1; background: #17352d; }
+    .local-badge { display: flex; align-items: center; gap: 8px; padding: 7px 11px; border: 1px solid #293b3a; border-radius: 999px; color: #a7b9b9; background: #111a1d; font-size: .78rem; }
+    .local-dot { width: 7px; height: 7px; border-radius: 50%; background: #8bd5bd; box-shadow: 0 0 10px #8bd5bd88; }
+    .hero { margin-bottom: 30px; }
+    .eyebrow { color: #8bd5bd; font-size: .75rem; font-weight: 750; letter-spacing: .15em; text-transform: uppercase; }
+    h1 { margin: 10px 0 10px; font-size: clamp(2.3rem, 5vw, 3.65rem); line-height: 1.06; letter-spacing: -.055em; }
+    .intro { margin: 0; max-width: 660px; color: #9eacbb; font-size: 1.02rem; }
+    .workspace { display: grid; grid-template-columns: minmax(270px, 340px) minmax(0, 1fr); gap: 18px; align-items: start; }
+    .panel { min-width: 0; padding: 23px; border: 1px solid #253140; border-radius: 18px; background: linear-gradient(155deg, #151d28f5, #111720f5); box-shadow: 0 24px 70px #0003; }
+    .panel-heading { margin: 0 0 4px; color: #edf1f8; font-size: 1rem; font-weight: 740; }
+    .panel-subtitle { margin: 0 0 20px; color: #8694a6; font-size: .84rem; }
+    label { display: block; margin: 0 0 8px; color: #cbd5e1; font-size: .83rem; font-weight: 680; }
+    input, textarea, select { width: 100%; min-width: 0; border: 1px solid #303e4f; border-radius: 10px; outline: none; padding: 12px 13px; color: #edf1f8; background: #0d131c; font: inherit; transition: border-color .15s, box-shadow .15s; }
+    input:focus, textarea:focus, select:focus { border-color: #70c9ad; box-shadow: 0 0 0 3px #70c9ad1c; }
+    input::placeholder, textarea::placeholder { color: #637185; }
+    textarea { min-height: 116px; resize: vertical; line-height: 1.6; }
+    button { min-height: 44px; border: 1px solid #a4e4d1; border-radius: 10px; padding: 10px 15px; color: #07120f; background: #8bd5bd; font: inherit; font-size: .88rem; font-weight: 760; cursor: pointer; transition: background .15s, transform .15s, opacity .15s; }
+    button:hover:not(:disabled) { transform: translateY(-1px); background: #a5e5d1; }
     button:disabled { opacity: .45; cursor: not-allowed; }
-    .field { margin-bottom: 20px; }
-    .status { min-height: 26px; margin: 14px 0 0; color: #aab5c6; font-size: .9rem; }
+    button[aria-busy="true"]::before { display: inline-block; width: 13px; height: 13px; margin-right: 8px; border: 2px solid #07120f55; border-top-color: #07120f; border-radius: 50%; vertical-align: -2px; content: ""; animation: spin .7s linear infinite; }
+    .primary-action { white-space: nowrap; }
+    .field { margin-bottom: 16px; }
+    .row { display: flex; gap: 9px; align-items: stretch; }
+    .row input { flex: 1; }
+    .divider { display: flex; align-items: center; gap: 10px; margin: 19px 0; color: #718094; font-size: .72rem; }
+    .divider::before, .divider::after { height: 1px; flex: 1; background: #293442; content: ""; }
+    .existing-row { display: grid; gap: 10px; }
+    .existing-row .field { margin: 0; }
+    .hint { margin: 9px 0 0; color: #78879a; font-size: .76rem; line-height: 1.5; }
+    .repo { display: flex; gap: 9px; align-items: flex-start; margin-top: 18px; padding: 11px 12px; border: 1px solid #2d4a42; border-radius: 10px; color: #b3e8d7; background: #13231f; font-size: .82rem; overflow-wrap: anywhere; }
+    .repo::before { content: "●"; color: #8bd5bd; font-size: .65rem; line-height: 1.8; }
+    .status { min-height: 40px; margin: 13px 0 0; color: #91a0b2; font-size: .79rem; }
     .status.error { color: #ff9d9d; }
-    .answer { margin-top: 20px; padding: 20px 22px; border: 1px solid #2a3545; border-radius: 14px; background: #101722; white-space: pre-wrap; }
-    .answer h2 { margin: 0 0 12px; font-size: 1.05rem; }
-    .sources { margin-top: 18px; color: #93a3b8; font-size: .86rem; }
-    .sources ul { margin: 8px 0 0; padding-left: 20px; }
-    .repo { color: #8bd5bd; overflow-wrap: anywhere; }
-    @media (max-width: 560px) { main { padding-top: 42px; } .panel { padding: 18px; } .row { align-items: stretch; flex-direction: column; } .row button { width: 100%; } }
+    .chat-panel { min-height: 420px; padding: 24px 26px; }
+    .chat-top { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding-bottom: 17px; border-bottom: 1px solid #26313f; }
+    .chat-title { display: flex; align-items: center; gap: 10px; }
+    .chat-icon { display: grid; width: 34px; height: 34px; place-items: center; border: 1px solid #2c3d4c; border-radius: 10px; color: #a5e5d1; background: #18242c; }
+    .chat-title strong { display: block; font-size: .92rem; }
+    .chat-title span { display: block; color: #8290a2; font-size: .75rem; }
+    .chat-scope { padding: 5px 9px; border: 1px solid #304139; border-radius: 999px; color: #a9c8bd; background: #16221f; font-size: .7rem; white-space: nowrap; }
+    .empty-state { display: grid; min-height: 215px; place-content: center; justify-items: center; padding: 30px 15px; text-align: center; }
+    .empty-icon { display: grid; width: 50px; height: 50px; place-items: center; margin-bottom: 13px; border: 1px solid #30404e; border-radius: 16px; color: #9cb4b5; background: #19222b; font-size: 1.25rem; }
+    .empty-state strong { color: #dce4ed; font-size: .95rem; }
+    .empty-state p { max-width: 360px; margin: 6px 0 0; color: #8391a3; font-size: .82rem; }
+    #question-form { margin-top: 20px; }
+    .composer-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 9px; }
+    .composer-hint { color: #77869a; font-size: .74rem; }
+    .answer { margin-top: 22px; padding: 20px 21px; border: 1px solid #2a3947; border-radius: 14px; background: #0f161f; animation: rise-in .22s ease-out; }
+    .answer.refusal { border-color: #725832; background: linear-gradient(135deg, #282319, #141821 75%); }
+    .answer-head { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; }
+    .answer h2 { margin: 0; font-size: .98rem; }
+    .answer-mark { display: grid; width: 27px; height: 27px; place-items: center; border-radius: 9px; color: #07120f; background: #8bd5bd; font-weight: 800; }
+    .refusal .answer-mark { color: #281b0b; background: #f1bd72; }
+    .answer-label { margin-left: auto; color: #8bd5bd; font-size: .68rem; font-weight: 750; letter-spacing: .08em; text-transform: uppercase; }
+    .refusal .answer-label { color: #f1bd72; }
+    .answer-text { color: #d5deea; line-height: 1.78; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .sources { margin-top: 13px; padding: 16px 17px; border: 1px solid #263442; border-radius: 13px; background: #0f161f; color: #aab5c6; font-size: .82rem; animation: rise-in .24s ease-out; }
+    .sources-title { color: #dce4ef; font-size: .83rem; font-weight: 720; }
+    .sources ul { display: grid; gap: 7px; margin: 10px 0 0; padding: 0; list-style: none; }
+    .sources a { display: flex; justify-content: space-between; gap: 14px; padding: 9px 11px; border: 1px solid #283747; border-radius: 9px; color: #9fe0cb; text-decoration: none; overflow-wrap: anywhere; transition: background .15s, border-color .15s; }
+    .sources a:hover { border-color: #5c9e89; background: #15221f; }
+    .source-location { flex: 0 0 auto; color: #8291a3; font-size: .75rem; }
+    @keyframes rise-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 760px) { main { width: min(680px, calc(100% - 30px)); padding-top: 22px; } .topbar { padding-bottom: 38px; } .workspace { grid-template-columns: 1fr; } .chat-panel { min-height: 350px; } }
+    @media (max-width: 520px) { main { width: calc(100% - 22px); padding-top: 14px; } .topbar { padding-bottom: 34px; } .panel, .chat-panel { padding: 18px; } .hero { margin-bottom: 22px; } .row { flex-direction: column; } .primary-action { width: 100%; } .composer-footer { align-items: stretch; flex-direction: column; } .composer-footer button { width: 100%; } .chat-scope { font-size: .64rem; } .sources a { flex-direction: column; gap: 3px; } }
   </style>
 </head>
 <body>
   <main>
-    <div class="eyebrow">Repository Q&amp;A</div>
-    <h1>Understand a codebase.</h1>
-    <p class="intro">Paste a public GitHub repository link. When indexing finishes, ask questions grounded in its source files.</p>
-    <section class="panel" aria-label="Repository and question">
-      <form id="repo-form" class="field">
-        <label for="repo-url">GitHub repository</label>
-        <div class="row"><input id="repo-url" type="url" placeholder="https://github.com/owner/repository" required><button id="index-button">Index repository</button></div>
-      </form>
-      <div id="repo-name" class="repo" hidden></div>
-      <p id="status" class="status" role="status" aria-live="polite">Connect your configured Qdrant, Neo4j, and Groq services to begin.</p>
-      <form id="question-form" hidden>
-        <div class="field"><label for="question">Ask about the code</label><textarea id="question" placeholder="How does authentication work?" required></textarea></div>
-        <button id="ask-button">Ask question</button>
-      </form>
-      <div id="answer" class="answer" hidden></div>
-      <div id="sources" class="sources" hidden></div>
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">⌘</span><span>Repo Guide</span></div>
+      <div class="local-badge"><span class="local-dot"></span>Hybrid search · cited answers</div>
+    </header>
+    <section class="hero">
+      <div class="eyebrow">Your codebase, understood</div>
+      <h1>Ask your repository<br>anything.</h1>
+      <p class="intro">Explore architecture, trace behavior, and find implementation details with answers grounded in source files.</p>
     </section>
+    <div class="workspace">
+      <aside class="panel" aria-label="Repository selection">
+        <h2 class="panel-heading">Your workspace</h2>
+        <p class="panel-subtitle">Connect to a repository to get started.</p>
+        <form id="existing-form" class="existing-row">
+          <div class="field"><label for="existing-repo">Indexed repositories</label><select id="existing-repo"><option value="">Loading repositories…</option></select></div>
+          <button id="connect-button" type="submit" disabled>Open repository <span aria-hidden="true">→</span></button>
+        </form>
+        <p class="hint">Reconnect to your saved index without running ingestion again.</p>
+        <div class="divider">or index a new repository</div>
+        <form id="repo-form" class="field">
+          <label for="repo-url">Public GitHub URL</label>
+          <div class="row"><input id="repo-url" type="url" placeholder="github.com/owner/repo" required><button id="index-button" class="primary-action">Index repo</button></div>
+        </form>
+        <div id="repo-name" class="repo" hidden></div>
+        <p id="status" class="status" role="status" aria-live="polite">Loading indexed repositories…</p>
+      </aside>
+      <section class="panel chat-panel" aria-label="Repository assistant">
+        <div class="chat-top">
+          <div class="chat-title"><span class="chat-icon" aria-hidden="true">✳</span><div><strong>Codebase assistant</strong><span>Answers with source citations</span></div></div>
+          <span class="chat-scope">REPOSITORY ONLY</span>
+        </div>
+        <div id="empty-state" class="empty-state">
+          <div class="empty-icon" aria-hidden="true">⌕</div>
+          <strong>Choose a repository to begin</strong>
+          <p>Select an indexed repository or add a GitHub URL. Then ask a question about how the code works.</p>
+        </div>
+        <form id="question-form" hidden>
+          <div class="field"><label for="question">What would you like to know?</label><textarea id="question" placeholder="How does authentication work? Which files handle user sessions?" required></textarea></div>
+          <div class="composer-footer"><span class="composer-hint">Answers are based on the selected repository.</span><button id="ask-button" type="submit">Ask question <span aria-hidden="true">↗</span></button></div>
+        </form>
+        <div id="answer" class="answer" hidden></div>
+        <div id="sources" class="sources" hidden></div>
+      </section>
+    </div>
   </main>
   <script>
     const repoForm = document.querySelector("#repo-form");
     const questionForm = document.querySelector("#question-form");
+    const existingForm = document.querySelector("#existing-form");
+    const existingRepo = document.querySelector("#existing-repo");
     const statusBox = document.querySelector("#status");
     const answerBox = document.querySelector("#answer");
     const sourcesBox = document.querySelector("#sources");
+    const emptyState = document.querySelector("#empty-state");
     let repoName = "";
+
+    function activateRepository(name) {
+      repoName = name;
+      localStorage.setItem("rag-github-repo", name);
+      const repoLabel = document.querySelector("#repo-name");
+      repoLabel.textContent = `Connected to indexed repository: ${name}`;
+      repoLabel.hidden = false;
+      questionForm.hidden = false;
+      emptyState.hidden = true;
+      answerBox.hidden = sourcesBox.hidden = true;
+      setStatus("Ready. Ask a question about this repository.");
+    }
+
+    async function loadRepositories() {
+      try {
+        const data = await request("/repositories");
+        existingRepo.replaceChildren();
+        const repositories = data.repositories || [];
+        if (!repositories.length) {
+          existingRepo.add(new Option("No repositories indexed yet", ""));
+          existingRepo.disabled = true;
+          return;
+        }
+        existingRepo.disabled = false;
+        repositories.forEach(name => existingRepo.add(new Option(name, name)));
+        document.querySelector("#connect-button").disabled = false;
+        const saved = localStorage.getItem("rag-github-repo");
+        if (repositories.includes(saved)) {
+          existingRepo.value = saved;
+          activateRepository(saved);
+        }
+      } catch (error) {
+        existingRepo.replaceChildren(new Option("Could not load repositories", ""));
+        existingRepo.disabled = true;
+        setStatus(error.message, true);
+      }
+    }
 
     function setStatus(message, error = false) {
       statusBox.textContent = message;
       statusBox.classList.toggle("error", error);
+    }
+
+    function renderAnswer(text, isRelevant) {
+      answerBox.replaceChildren();
+      answerBox.classList.toggle("refusal", !isRelevant);
+      const header = document.createElement("div");
+      header.className = "answer-head";
+      const mark = document.createElement("span");
+      mark.className = "answer-mark";
+      mark.textContent = isRelevant ? "✓" : "!";
+      const heading = document.createElement("h2");
+      heading.textContent = isRelevant ? "Repository answer" : "Outside repository scope";
+      const label = document.createElement("span");
+      label.className = "answer-label";
+      label.textContent = isRelevant ? "Grounded response" : "Not answered";
+      header.append(mark, heading, label);
+      const body = document.createElement("div");
+      body.className = "answer-text";
+      body.textContent = text;
+      answerBox.append(header, body);
+      answerBox.hidden = false;
     }
 
     async function request(path, options) {
@@ -74,10 +208,18 @@
       return data;
     }
 
+    existingForm.addEventListener("submit", event => {
+      event.preventDefault();
+      if (existingRepo.value) activateRepository(existingRepo.value);
+    });
+
+    loadRepositories();
+
     repoForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const button = document.querySelector("#index-button");
       button.disabled = true;
+      button.setAttribute("aria-busy", "true");
       questionForm.hidden = answerBox.hidden = sourcesBox.hidden = true;
       try {
         const job = await request("/ingest", {
@@ -93,15 +235,19 @@
         } while (result.status === "running");
         if (result.status === "failed") throw new Error(result.error || "Indexing failed");
         repoName = result.repo_name;
+        localStorage.setItem("rag-github-repo", repoName);
         const repoLabel = document.querySelector("#repo-name");
         repoLabel.textContent = `Indexed: ${repoName} · ${result.files} files · ${result.chunks} chunks`;
         repoLabel.hidden = false;
         questionForm.hidden = false;
+        emptyState.hidden = true;
         setStatus("Ready. Ask a question about this repository.");
+        await loadRepositories();
       } catch (error) {
         setStatus(error.message, true);
       } finally {
         button.disabled = false;
+        button.removeAttribute("aria-busy");
       }
     });
 
@@ -109,6 +255,7 @@
       event.preventDefault();
       const button = document.querySelector("#ask-button");
       button.disabled = true;
+      button.setAttribute("aria-busy", "true");
       answerBox.hidden = sourcesBox.hidden = true;
       setStatus("Searching the repository and preparing an answer…");
       try {
@@ -116,21 +263,27 @@
           method: "POST", headers: {"Content-Type": "application/json"},
           body: JSON.stringify({query: document.querySelector("#question").value.trim(), repo_name: repoName})
         });
-        answerBox.replaceChildren();
-        const heading = document.createElement("h2");
-        heading.textContent = "Answer";
-        const text = document.createElement("div");
-        text.textContent = result.answer;
-        answerBox.append(heading, text);
-        answerBox.hidden = false;
+        renderAnswer(result.answer, result.is_relevant !== false);
         sourcesBox.replaceChildren();
         const title = document.createElement("div");
+        title.className = "sources-title";
         title.textContent = "Sources";
         const list = document.createElement("ul");
         result.sources.forEach(source => {
           if (!source.file_path) return;
           const item = document.createElement("li");
-          item.textContent = `${source.file_path}:${source.start_line}-${source.end_line}`;
+          const link = document.createElement("a");
+          const path = source.file_path.split("/").map(encodeURIComponent).join("/");
+          link.href = `https://github.com/${repoName}/blob/HEAD/${path}`;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          const file = document.createElement("span");
+          file.textContent = `${source.file_path}${source.notebook_cell ? ` · cell ${source.notebook_cell}` : ""}`;
+          const location = document.createElement("span");
+          location.className = "source-location";
+          location.textContent = `lines ${source.start_line}-${source.end_line} ↗`;
+          link.append(file, location);
+          item.append(link);
           list.append(item);
         });
         sourcesBox.append(title, list);
@@ -140,6 +293,7 @@
         setStatus(error.message, true);
       } finally {
         button.disabled = false;
+        button.removeAttribute("aria-busy");
       }
     });
   </script>

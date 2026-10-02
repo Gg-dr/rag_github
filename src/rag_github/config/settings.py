@@ -62,8 +62,20 @@ class Settings(BaseSettings):
 
     # ── Retrieval Tuning ──────────────────────────────────────────────────
     top_k_vector: int = Field(default=20, description="Top-K for initial vector search")
+    hnsw_ef: int = Field(
+        default=64,
+        description="Qdrant HNSW search breadth; higher values favor recall over speed",
+    )
     top_k_rerank: int = Field(default=10, description="Top-K after reranking")
     top_k_final: int = Field(default=5, description="Top-K results returned to user")
+    min_relevance_score: float = Field(
+        default=0.35,
+        description="Minimum Qdrant cosine similarity required to answer a repository query",
+    )
+    context_budget_tokens: int = Field(
+        default=3500,
+        description="Approximate token budget for retrieved context sent to the LLM",
+    )
     graph_expansion_depth: int = Field(
         default=2, description="Max hops for graph context expansion"
     )

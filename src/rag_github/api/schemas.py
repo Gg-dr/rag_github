@@ -20,6 +20,9 @@ class QueryRequest(BaseModel):
 
 class QueryResponse(BaseModel):
     answer: str = Field(..., description="The generated response from the LLM")
+    is_relevant: bool = Field(
+        True, description="Whether repository search found enough relevant context"
+    )
     sources: list[dict[str, Any]] = Field(
         default_factory=list, description="List of source chunks used for the answer"
     )

@@ -92,4 +92,9 @@ def query_repository(question: str, repo_name: str, top_k: int = 5) -> dict[str,
     with Neo4jClient(settings) as neo4j:
         retriever = HybridRetriever(QdrantStore(settings), CodeEmbedder(), SparseEncoder())
         expander = GraphExpander(neo4j, settings.graph_expansion_depth)
-        return RAGChain(retriever, expander).invoke(question, repo_name, top_k)
+        return RAGChain(
+            retriever,
+            expander,
+            min_relevance_score=settings.min_relevance_score,
+            context_budget_tokens=settings.context_budget_tokens,
+        ).invoke(question, repo_name, top_k)

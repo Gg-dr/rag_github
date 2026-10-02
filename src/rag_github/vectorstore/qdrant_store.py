@@ -37,6 +37,30 @@ class QdrantStore:
         self.client.get_collections()
         return True
 
+    def list_repositories(self) -> list[str]:
+        """Return distinct repository names stored in this collection."""
+        collections = self.client.get_collections().collections
+        if not any(collection.name == self.collection_name for collection in collections):
+            return []
+        repositories = set()
+        offset = None
+        while True:
+            points, offset = self.client.scroll(
+                collection_name=self.collection_name,
+                limit=256,
+                offset=offset,
+                with_payload=["repo_name"],
+                with_vectors=False,
+            )
+            repositories.update(
+                point.payload["repo_name"]
+                for point in points
+                if point.payload and point.payload.get("repo_name")
+            )
+            if offset is None:
+                break
+        return sorted(repositories)
+
     def ensure_collection(self) -> None:
         try:
             collections = self.client.get_collections().collections
@@ -112,20 +136,22 @@ class QdrantStore:
         sparse_vector: Any,
         top_k: int = 20,
         repo_name: str | None = None,
+        candidate_limit: int = 60,
     ) -> list[dict]:
         query_filter = self._repo_filter(repo_name)
         prefetch = [
             models.Prefetch(
                 query=dense_vector.tolist(),
                 using="dense",
-                limit=top_k * 2,
+                limit=candidate_limit,
+                params=models.SearchParams(hnsw_ef=self.settings.hnsw_ef),
             ),
             models.Prefetch(
                 query=models.SparseVector(
                     indices=sparse_vector.indices, values=sparse_vector.values
                 ),
                 using="sparse",
-                limit=top_k * 2,
+                limit=candidate_limit,
             ),
         ]
 
@@ -136,9 +162,19 @@ class QdrantStore:
             query_filter=query_filter,
             limit=top_k,
             with_payload=True,
+            with_vectors=["dense"],
         )
-
-        return [self._point_result(point) for point in results.points]
+        query = np.asarray(dense_vector, dtype=np.float32)
+        results_list = []
+        for point in results.points:
+            result = self._point_result(point)
+            vectors = point.vector or {}
+            stored_dense = vectors.get("dense") if isinstance(vectors, dict) else None
+            if stored_dense is not None:
+                result["dense_score"] = float(np.dot(query, np.asarray(stored_dense)))
+            result["rrf_score"] = point.score
+            results_list.append(result)
+        return results_list
 
     def search_dense(
         self, query_vector: np.ndarray, limit: int = 20, filter_repo: str | None = None

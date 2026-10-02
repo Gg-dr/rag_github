@@ -46,6 +46,17 @@ async def ingest_status(job_id: str):
     return job
 
 
+@router.get("/repositories", response_model=dict)
+async def list_repositories():
+    try:
+        return {"repositories": QdrantStore().list_repositories()}
+    except Exception as error:
+        logger.exception("Could not list indexed repositories")
+        raise HTTPException(
+            status_code=503, detail="Could not load indexed repositories"
+        ) from error
+
+
 @router.post("/query", response_model=QueryResponse)
 async def query_repo(request: QueryRequest):
     try:
@@ -54,7 +65,12 @@ async def query_repo(request: QueryRequest):
                 status_code=422, detail="repo_name is required for repository queries"
             )
         result = query_repository(request.query, request.repo_name or "", request.top_k)
-        return QueryResponse(answer=result["answer"], sources=result["sources"], graph_context={})
+        return QueryResponse(
+            answer=result["answer"],
+            sources=result["sources"],
+            is_relevant=result["is_relevant"],
+            graph_context={},
+        )
     except HTTPException:
         raise
     except Exception as error:
